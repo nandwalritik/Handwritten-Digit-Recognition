@@ -4,7 +4,8 @@ import tkinter as tk
 
 from PIL import ImageGrab, Image 
 import numpy as np 
-import Xlib
+import pyscreeze
+import cv2
 model = load_model('mnist.h5')
 
 def predict_digit(img):
@@ -45,11 +46,13 @@ class App(tk.Tk):
 		self.canvas.delete("all")
 
 	def classify_handwriting(self):
-		HWND = self.canvas.winfo_id()
-		print(HWND)
-
-		rect = self.canvas.coords(HWND)
-		im 	 = ImageGrab.grab(rect)
+		x,y = self.canvas.winfo_x(),self.canvas.winfo_y()
+		x1,y1 = self.canvas.winfo_width(),self.canvas.winfo_height()
+		print(x,y,x1,y1)
+	
+		im 	 = pyscreeze.screenshot(region=(x,y,x1,y1))
+		# cv2.imshow("image",np.uint8(im))
+		# cv2.waitKey(0)
 		digit,acc = predict_digit(im)
 		self.label.configure(text= str(digit)+', '+ str(int(acc*100))+'%')
 
