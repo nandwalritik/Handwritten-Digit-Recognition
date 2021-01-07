@@ -1,7 +1,7 @@
 from tensorflow.keras.models import load_model
 from tkinter import *
 import tkinter as tk 
-
+import matplotlib.pyplot as plt
 from PIL import ImageGrab, Image 
 import numpy as np 
 import pyscreeze
@@ -9,20 +9,20 @@ import cv2
 model = load_model('mnist.h5')
 
 def predict_digit(img):
-	# resize image to 28x28 pixels
+	#resize image to 28x28 pixels
+	# img = 255-img
 	img = img.resize((28,28))
-
-	# converting rgb to grayscale
-
+	#convert rgb to grayscale
 	img = img.convert('L')
 	img = np.array(img)
-	# reshaping to support our model input and normalizing
+	img = 255-img
+	#reshaping to support our model input and normalizing
 	img = img.reshape(1,28,28,1)
 	img = img/255.0
-
-	# predicting the class
+	#predicting the class
 	res = model.predict([img])[0]
-	return np.argmax(res),max(res)
+	return np.argmax(res), max(res)
+	
 
 class App(tk.Tk):
 	def __init__(self):
@@ -46,7 +46,7 @@ class App(tk.Tk):
 		self.canvas.delete("all")
 
 	def classify_handwriting(self):
-		x,y = self.canvas.winfo_x(),self.canvas.winfo_y()
+		x,y = self.winfo_rootx()+self.canvas.winfo_x(),self.winfo_rooty()+self.canvas.winfo_y()
 		x1,y1 = self.canvas.winfo_width(),self.canvas.winfo_height()
 		print(x,y,x1,y1)
 	
